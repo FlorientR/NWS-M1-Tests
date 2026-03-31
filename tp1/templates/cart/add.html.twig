@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article ajouté{% endblock %}
+
+{% block body %}
+<h1>Article ajouté au panier</h1>
+<p>Produit : {{ product }}</p>
+<p>Frais de port estimés : {{ shippingCost }} €</p>
+<a href="{{ path('app_cart') }}">Voir le panier</a>
+{% endblock %}
