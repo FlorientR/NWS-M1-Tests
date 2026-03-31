@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Panier{% endblock %}
+{% block body %}
+<h1>Mon Panier</h1>
+<table>
+    <thead><tr><th>Article</th><th>Prix</th><th>Poids</th></tr></thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }} €</td>
+            <td>{{ item.weight }} kg</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p>Poids total : {{ totalWeight }} kg</p>
+<p>Frais de port : {{ shippingCost }} €</p>
+<form method="post" action="{{ path('app_cart_add') }}">
+    <input type="hidden" name="product_name" value="Nouveau produit">
+    <input type="hidden" name="weight" value="2.5">
+    <button type="submit">Ajouter au panier</button>
+</form>
+{% endblock %}

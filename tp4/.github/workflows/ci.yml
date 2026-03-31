@@ -1,0 +1,86 @@
+name: CI — Tests PHP / Symfony
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests:
+    name: PHPUnit + ParaTest
+    runs-on: ubuntu-latest
+
+    # =========================================================================
+    # EXERCICE TP4 — COMPLÉTER CE FICHIER
+    #
+    # TODO 1 : Ajoutez un service WireMock dans la section `services`
+    #          Image : wiremock/wiremock:3.10.0
+    #          Port  : 8080:8080
+    #          Healthcheck : curl http://localhost:8080/__admin/health
+    #
+    # TODO 2 : Dans la step "Lancer les tests", remplacez phpunit
+    #          par paratest avec --processes=2
+    #
+    # TODO 3 : Ajoutez une step "Upload coverage" qui utilise
+    #          l'action codecov/codecov-action@v4
+    # =========================================================================
+
+    services:
+      # TODO 1 : Décommentez et complétez le service WireMock ci-dessous
+      # wiremock:
+      #   image: wiremock/wiremock:3.10.0
+      #   ports:
+      #     - 8080:8080
+      #   options: >-
+      #     --health-cmd "curl -f http://localhost:8080/__admin/health"
+      #     --health-interval 5s
+      #     --health-timeout 5s
+      #     --health-retries 10
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de PHP 8.3 + extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo, pdo_sqlite, sqlite3, pcov
+          coverage: pcov
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installation des dépendances Composer
+        working-directory: tp4-cicd
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Création de la base de données de test
+        working-directory: tp4-cicd
+        env:
+          APP_ENV: test
+          DATABASE_URL: "sqlite:///%kernel.project_dir%/var/test.db"
+        run: |
+          php bin/console doctrine:database:create --if-not-exists --env=test
+          php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Lancer les tests (séquentiel)
+        working-directory: tp4-cicd
+        env:
+          APP_ENV: test
+          DATABASE_URL: "sqlite:///%kernel.project_dir%/var/test.db"
+          WEATHER_API_URL: "http://localhost:8080"
+        # TODO 2 : Remplacez phpunit par paratest --processes=2
+        run: php vendor/bin/phpunit --testdox --coverage-clover var/coverage.xml
+
+      # TODO 3 : Décommentez pour envoyer la couverture à Codecov
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     files: tp4-cicd/var/coverage.xml
+      #     fail_ci_if_error: false
