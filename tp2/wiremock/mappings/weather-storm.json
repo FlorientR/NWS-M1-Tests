@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/weather?city=Brest"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "city": "Brest",
+      "condition": "Storm",
+      "temperature": 8,
+      "unit": "celsius"
+    }
+  }
+}

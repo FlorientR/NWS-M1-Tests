@@ -1,0 +1,4 @@
+services:
+  test:
+    alias: 'App\Service\WeatherService'
+    public: true

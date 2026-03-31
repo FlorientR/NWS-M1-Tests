@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/weather?city=Error"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "error": "Internal Server Error",
+      "message": "Le service météo est temporairement indisponible"
+    }
+  }
+}
