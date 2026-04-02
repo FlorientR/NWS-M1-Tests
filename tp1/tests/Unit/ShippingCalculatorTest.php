@@ -4,6 +4,7 @@ namespace App\Tests\Unit;
 
 use App\Repository\ShippingRateRepository;
 use App\Service\ShippingCalculator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -77,8 +78,14 @@ class ShippingCalculatorTest extends TestCase
      */
     public function testCalculateForMediumPackageShouldReturn10Euros(): void
     {
-        // TODO : appeler calculate(7.0) et asserter 10.00
-        self::markTestSkipped();
+        // Arrange
+        $weight = 7.0;
+
+        // Act
+        $result = $this->calculator->calculate($weight);
+
+        // Assert
+        $this->assertSame(10.00, $result);
     }
 
     /**
@@ -86,8 +93,14 @@ class ShippingCalculatorTest extends TestCase
      */
     public function testCalculateForHeavyPackageShouldReturn20Euros(): void
     {
-        // TODO : appeler calculate(15.0) et asserter 20.00
-        self::markTestSkipped();
+        // Arrange
+        $weight = 15.0;
+
+        // Act
+        $result = $this->calculator->calculate($weight);
+
+        // Assert
+        $this->assertSame(20.00, $result);
     }
 
     /**
@@ -95,19 +108,30 @@ class ShippingCalculatorTest extends TestCase
      */
     public function testCalculateForVeryHeavyPackageShouldReturn50Euros(): void
     {
-        // TODO : appeler calculate(40.0) et asserter 50.00
-        self::markTestSkipped();
+        // Arrange
+        $weight = 40.0;
+
+        // Act
+        $result = $this->calculator->calculate($weight);
+
+        // Assert
+        $this->assertSame(50.00, $result);
     }
 
     /**
      * Tester les valeurs exactement aux bornes des tranches (ex. 5.0 kg, 10.0 kg, 30.0 kg).
      * Les tests de frontière (boundary) sont essentiels pour détecter les erreurs off-by-one.
      */
-    public function testCalculateAtBoundary5kg(): void
+    #[DataProvider('calculateAtBoundaryDataProvider')]
+    public function testCalculateAtBoundary(float $weight, float $price): void
     {
-        // TODO : appeler calculate(5.0) — à quelle tranche appartient exactement 5 kg ?
-        //        Comparer avec les règles métier dans le doc-block de ShippingCalculator
-        self::markTestSkipped();
+        // Arrange - $weight dans les paramètres
+
+        // Act
+        $result = $this->calculator->calculate($weight);
+
+        // Assert
+        $this->assertSame($price, $result);
     }
 
     /**
@@ -115,7 +139,23 @@ class ShippingCalculatorTest extends TestCase
      */
     public function testCalculateForTinyWeightShouldReturn5Euros(): void
     {
-        // TODO : appeler calculate(0.001) et asserter 5.00
-        self::markTestSkipped();
+        // Arrange
+        $weight = 0.00001;
+
+        // Act
+        $result = $this->calculator->calculate($weight);
+
+        // Assert
+        $this->assertSame(5.00, $result);
+    }
+
+    public static function calculateAtBoundaryDataProvider()
+    {
+        return [
+            [5.0, 5.0],
+            [10.0, 10.0],
+            [30.0, 20.0],
+            [30.00001, 50.0],
+        ];
     }
 }

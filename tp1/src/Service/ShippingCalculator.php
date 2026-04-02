@@ -32,7 +32,7 @@ class ShippingCalculator
             );
         }
 
-        if ($weightKg > 5) {
+        if ($weightKg <= 5) {
             return 5.00;
         }
 
@@ -68,11 +68,11 @@ class ShippingCalculator
         }
 
         foreach ($rates as $rate) {
-            if ($rate->getMaxWeightKg() === null || $weightKg <= $rate->getMaxWeightKg()) {
+            if ($rate->getMaxWeightKg() !== null && $weightKg <= $rate->getMaxWeightKg()) {
                 return $rate->getPrice();
             }
         }
 
-        return (float) end($rates)->getPrice();
+        return (float) array_first($rates)->getPrice();
     }
 }

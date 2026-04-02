@@ -61,9 +61,16 @@ class CartControllerTest extends WebTestCase
      */
     public function testCartPageDisplaysItems(): void
     {
-        // TODO : créer un client, faire GET /cart,
-        //        asserter que "Livre PHP 8" et "Clavier mécanique" sont présents
-        self::markTestSkipped();
+        // Arrange
+        $client = static::createClient();
+
+        // Act
+        $crawler = $client->request('GET', '/cart');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $products = $crawler->filter('table tbody tr');
+        $this->assertCount(2, $products);
     }
 
     /**
@@ -71,9 +78,21 @@ class CartControllerTest extends WebTestCase
      */
     public function testCartPageDisplaysShippingCost(): void
     {
-        // TODO : faire GET /cart et asserter que le texte "Frais de port"
-        //        suivi d'un montant en euros est présent dans le HTML
-        self::markTestSkipped();
+        // Arrange
+        $client = static::createClient();
+
+        // Act
+        $crawler = $client->request('GET', '/cart');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorTextContains('p#shipping-cost-display', 'Frais de port : ');
+
+        $this->assertAnySelectorTextContains('p', 'Frais de port : ');
+
+        $element = $crawler->filter('p#shipping-cost-display');
+        $this->assertMatchesRegularExpression('/Frais de port : \d(.\d)? €/', $element->text());
     }
 
     /**
@@ -82,8 +101,14 @@ class CartControllerTest extends WebTestCase
      */
     public function testAddToCartRequiresPostMethod(): void
     {
-        // TODO : faire GET /cart/add et asserter assertResponseStatusCodeSame(405)
-        self::markTestSkipped();
+        // Arrange
+        $client = static::createClient();
+
+        // Act
+        $crawler = $client->request('GET', '/cart/add');
+
+        // Assert
+        $this->assertResponseStatusCodeSame(405);
     }
 
     /**
@@ -92,9 +117,15 @@ class CartControllerTest extends WebTestCase
      */
     public function testAddToCartUsesDefaultProductNameWhenMissing(): void
     {
-        // TODO : faire POST /cart/add SANS product_name,
-        //        asserter que "Article inconnu" apparaît dans la réponse
-        self::markTestSkipped();
+        // Arrange
+        $client = static::createClient();
+
+        // Act
+        $crawler = $client->request('POST', '/cart/add');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $this->assertAnySelectorTextContains('p', 'Article inconnu');
     }
 
     /**
@@ -103,7 +134,14 @@ class CartControllerTest extends WebTestCase
      */
     public function testAddToCartDisplaysCorrectShippingCost(): void
     {
-        // TODO : envoyer weight=1.0 et asserter que le montant affiché est correct
-        self::markTestSkipped();
+        // Arrange
+        $client = static::createClient();
+
+        // Act
+        $crawler = $client->request('POST', '/cart/add');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $this->assertAnySelectorTextContains('p', 'Frais de port estimés : 5 €');
     }
 }

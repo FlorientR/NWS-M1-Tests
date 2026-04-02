@@ -22,10 +22,10 @@
 
 <p>Poids total : {{ totalWeight }} kg</p>
 
-<p>Frais de port : {{ shippingCost }} €</p>
+<p id="shipping-cost-display">Frais de port : {{ shippingCost }} €</p>
 
 <form method="post" action="{{ path('app_cart_add') }}">
-    <input type="hidden" name="product_name" value="Nouveau produit">
+    <input type="hidden" name="product_name">
     <input type="hidden" name="weight" value="2.5">
     <button type="submit">Ajouter au panier</button>
 </form>
