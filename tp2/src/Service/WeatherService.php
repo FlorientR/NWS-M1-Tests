@@ -33,15 +33,16 @@ class WeatherService
 
             $statusCode = $response->getStatusCode();
 
-            // TODO EXERCICE : Lever WeatherServiceException si $statusCode >= 500
+            if ($statusCode >= 500) {
+                throw new WeatherServiceException('Weather API is not available');
+            }
 
             $data = $response->toArray();
 
             return $data['condition'] ?? 'Unknown';
 
         } catch (TransportExceptionInterface $e) {
-            // TODO EXERCICE : Lever WeatherServiceException::fromTimeout()
-            throw $e;
+            throw new WeatherServiceException('Weather API is not available');
         }
     }
 

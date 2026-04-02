@@ -76,5 +76,12 @@ class WeatherServiceWireMockTest extends KernelTestCase
 
     // ── TODO EXERCICE 1 ──────────────────────────────────────────────────────
     // Créer wiremock/mappings/weather-cloudy.json pour Lyon
-    // public function testGetConditionForLyon(): void { ... }
+     public function testGetConditionForLyon(): void
+     {
+         // Act — WireMock renvoie condition "Storm" (mapping weather-storm.json)
+         $condition = $this->weatherService->getCurrentCondition('Lyon');
+
+         // Assert
+         self::assertSame('Cloudy', $condition);
+     }
 }

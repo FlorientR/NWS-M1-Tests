@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Météo{% endblock %}
+
+{% block body %}
+<h1>Service météo</h1>
+<form method="POST">
+    <input type="text" name="city" placeholder="Ville">
+    <button type="submit">Rechercher</button>
+</form>
+{% if message is defined %}
+<p>{{ message }}</p>
+{% endif %}
+{% endblock %}
