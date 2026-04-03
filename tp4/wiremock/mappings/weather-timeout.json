@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/weather?city=Timeout"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 30000,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "city": "Timeout",
+      "condition": "Sunny"
+    }
+  }
+}

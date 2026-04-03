@@ -2,3 +2,6 @@ services:
   test:
     alias: 'App\Service\WeatherService'
     public: true
+  test2:
+    alias: 'App\Service\LoyaltyPointsService'
+    public: true

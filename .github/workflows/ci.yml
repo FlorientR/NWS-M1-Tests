@@ -2,9 +2,9 @@ name: CI — Tests PHP / Symfony
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "master", "develop", "correction" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master", "develop" ]
 
 jobs:
   tests:
@@ -28,19 +28,24 @@ jobs:
 
     services:
       # TODO 1 : Décommentez et complétez le service WireMock ci-dessous
-      # wiremock:
-      #   image: wiremock/wiremock:3.10.0
-      #   ports:
-      #     - 8080:8080
-      #   options: >-
-      #     --health-cmd "curl -f http://localhost:8080/__admin/health"
-      #     --health-interval 5s
-      #     --health-timeout 5s
-      #     --health-retries 10
+      wiremock:
+        image: wiremock/wiremock:3.10.0
+        ports:
+          - 8080:8080
+        options: >-
+          --health-cmd "curl -f http://localhost:8080/__admin/health"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
+
+      - name: Copier les stubs WireMock dans le container
+        run: |
+          docker cp tp4/wiremock/mappings/. $(docker ps -qf "ancestor=wiremock/wiremock:3.10.0"):/home/wiremock/mappings/
+          docker exec $(docker ps -qf "ancestor=wiremock/wiremock:3.10.0") curl -X POST http://localhost:8080/__admin/mappings/reset
 
       - name: Installation de PHP 8.3 + extensions
         uses: shivammathur/setup-php@v2
@@ -57,30 +62,27 @@ jobs:
           restore-keys: composer-
 
       - name: Installation des dépendances Composer
-        working-directory: tp4-cicd
+        working-directory: tp4
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Création de la base de données de test
-        working-directory: tp4-cicd
+        working-directory: tp4
         env:
           APP_ENV: test
           DATABASE_URL: "sqlite:///%kernel.project_dir%/var/test.db"
         run: |
-          php bin/console doctrine:database:create --if-not-exists --env=test
           php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-      - name: Lancer les tests (séquentiel)
-        working-directory: tp4-cicd
+      - name: Lancer les tests
+        working-directory: tp4
         env:
           APP_ENV: test
           DATABASE_URL: "sqlite:///%kernel.project_dir%/var/test.db"
           WEATHER_API_URL: "http://localhost:8080"
-        # TODO 2 : Remplacez phpunit par paratest --processes=2
-        run: php vendor/bin/phpunit --testdox --coverage-clover var/coverage.xml
+        run: php vendor/bin/paratest --processes=2 --testdox --coverage-clover var/coverage.xml
 
-      # TODO 3 : Décommentez pour envoyer la couverture à Codecov
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     files: tp4-cicd/var/coverage.xml
-      #     fail_ci_if_error: false
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: tp4/var/coverage.xml
+          fail_ci_if_error: false
