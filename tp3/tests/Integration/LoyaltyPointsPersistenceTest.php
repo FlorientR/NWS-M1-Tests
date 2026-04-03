@@ -77,7 +77,35 @@ class LoyaltyPointsPersistenceTest extends KernelTestCase
 
     // ── TODO EXERCICE 2 ──────────────────────────────────────────────────────
     // Créez un 2e test avec alice@example.com — doit fonctionner grâce au rollback
+    public function testInsertAliceTwiceInDatabase(): void
+    {
+        // Arrange
+        $user = new User('Alice', 'alice@example.com');
+        $this->em->persist($user);
+        $this->em->flush();
+
+        // Act
+        $alice = $this->userRepository->find($user->getId());
+
+        // Assert
+        self::assertNotNull($alice);
+    }
 
     // ── TODO EXERCICE 3 ──────────────────────────────────────────────────────
-    // public function testUserCanBeFoundAfterEarnAndPersist(): void { ... }
+     public function testUserCanBeFoundAfterEarnAndPersist(): void
+     {
+         // Arrange
+         $user = new User('Alice', 'alice@example.com');
+         $this->em->persist($user);
+         $this->em->flush();
+
+         // Act
+         $points = $this->service->earnAndPersist($user, 25.00);
+
+         // Assert
+         $this->em->clear();
+         $reloaded = $this->userRepository->find($user->getId());
+         self::assertNotNull($reloaded);
+         self::assertSame(25, $reloaded->getLoyaltyPoints());
+     }
 }

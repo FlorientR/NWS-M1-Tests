@@ -65,8 +65,17 @@ class LoyaltyPointsService
      */
     public function earnPoints(User $user, float $amount): int
     {
-        // TODO : implémentez cette méthode
-        throw new \LogicException('À implémenter — Phase GREEN du TDD');
+        $points = (int) $amount;
+        $day = (int) $this->clock->now()->format('N');
+        if ($day === 6 || $day === 7) {
+            $points *= 2;
+        }
+
+        $userPoints = $user->getLoyaltyPoints();
+        $newUserPoints = $userPoints + $points;
+        $user->setLoyaltyPoints($newUserPoints);
+
+        return $newUserPoints;
     }
 
     /**
@@ -78,7 +87,10 @@ class LoyaltyPointsService
      */
     public function earnAndPersist(User $user, float $amount): int
     {
-        // TODO : implémentez cette méthode
-        throw new \LogicException('À implémenter — Phase PERSISTANCE du TDD');
+        $this->earnPoints($user, $amount);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user->getLoyaltyPoints();
     }
 }

@@ -29,11 +29,11 @@ make test             # Tout
 
 ## Fichiers à modifier
 
-| Fichier | Quoi faire |
-|---------|-----------|
-| `src/Service/LoyaltyPointsService::earnPoints()` | Phase GREEN : 1€ = 1 point |
-| `src/Service/LoyaltyPointsService::earnPoints()` | Phase REFACTOR : bonus weekend |
-| `src/Service/LoyaltyPointsService::earnAndPersist()` | Phase PERSISTANCE |
+| Fichier                                              | Quoi faire                     |
+|------------------------------------------------------|--------------------------------|
+| `src/Service/LoyaltyPointsService::earnPoints()`     | Phase GREEN : 1€ = 1 point     |
+| `src/Service/LoyaltyPointsService::earnPoints()`     | Phase REFACTOR : bonus weekend |
+| `src/Service/LoyaltyPointsService::earnAndPersist()` | Phase PERSISTANCE              |
 
 ## Règles métier à implémenter
 
