@@ -4,7 +4,7 @@ install:
 	docker compose run --rm php composer install
 	docker compose run --rm php mkdir -p var
 	docker compose run --rm php php bin/console doctrine:migrations:migrate --no-interaction --env=test
-	docker compose up -d web
+	docker compose up -d
 
 up:
 	docker compose up -d
